@@ -47,7 +47,7 @@ class block_advnotifications extends block_base
      * @return bool|stdClass|stdObject
      */
     public function get_content() {
-        global $CFG;
+        global $CFG, $DB, $USER;
 
         if ($this->content !== null) {
             return $this->content;
@@ -64,8 +64,61 @@ class block_advnotifications extends block_base
             // Get & prepare notifications to render.
             $notifications = prep_notifications($this->instance->id);
 
+            // START new RSS code
+            // FIXME: should be abstracted into function
+            $arraySize = count($notifications);
+            $i = 0;
+            while($i < $arraySize) {
+                if(array_key_exists('message', $notifications[$i])) {
+                    $feedMsg = $notifications[$i]['message'];
+                    // if it is a URL- retrieve content
+                    if(filter_var($feedMsg, FILTER_VALIDATE_URL)) {
+                        
+                        // get record from db or insert it
+                        $advnotrss = $DB->get_record(
+                            'block_advnotificationsrss',
+                            array('url'=>$feedMsg),
+                            $fields='*', 
+                            $strictness=IGNORE_MISSING
+                        );
+                        if(! $advnotrss) {
+                            $advnotrss = new stdClass();
+                            $advnotrss->userid = $USER->id;
+                            $advnotrss->url = $feedMsg;
+                            $advnotrss->shared = 0;
+                            $advnotrss_id = $DB->insert_record('block_advnotificationsrss', $advnotrss);
+                        }
+    
+                        $updatedmsg = ''; 
+                        $rawFeed = $this->get_feed($advnotrss, 1, true);
+                        $items = $rawFeed->get_items();
+                        foreach($items as $item) {
+                            $description = $item->get_description();
+                            if(strlen($description) > 0) {
+                                $updatedmsg = $description;
+                                break;
+                            }
+                        }
+
+                        if(strlen($updatedmsg) > 0) {
+                            $notifications[$i]['message'] = $updatedmsg;
+                        }
+                        else {
+                            // nothing to pass on
+                            return false;
+                        }
+                    }
+                }
+                $i += 1;
+            }
+            // END new RSS code
+
             // Render notifications.
             $html = $renderer->render_notification($notifications);
+
+            // DEBUG
+            $debug = var_export($html, true);
+            error_log('$html ' . $debug);
 
             $this->content->text = $html;
 
@@ -191,6 +244,10 @@ class block_advnotifications extends block_base
      * @return block_rss_client\output\feed|null The renderable feed or null of there is an error
      */
     public function get_feed($feedrecord, $maxentries, $showtitle) {
+
+        // DEBUG
+        error_log('advnotifications get_feed called ok');
+
         global $CFG;
         require_once($CFG->libdir.'/simplepie/moodle_simplepie.php');
 
@@ -225,7 +282,12 @@ class block_advnotifications extends block_base
             $this->title = strip_tags($feedtitle);
         }
 
-        $feed = new \block_advnotifications\output\feed($feedtitle, $showtitle, $this->config->block_advnotifications_show_channel_image);
+        // DEBUG
+        error_log("get_feed pre-checks all seem ok");
+
+        // FIXME: $config var changed to 0
+        // $feed = new \block_advnotifications\output\feed($feedtitle, $showtitle, $this->config->block_advnotifications_show_channel_image);
+        $feed = new \block_advnotifications\output\feed($feedtitle, $showtitle, 0);
 
         if ($simplepieitems = $simplepiefeed->get_items(0, $maxentries)) {
             foreach ($simplepieitems as $simplepieitem) {
@@ -237,7 +299,9 @@ class block_advnotifications extends block_base
                         $simplepieitem->get_description(),
                         new moodle_url($simplepieitem->get_permalink()),
                         $simplepieitem->get_date('U'),
-                        $this->config->display_description
+                        // FIXME: just commented out
+                        // $this->config->display_description
+                        ''
                     );
 
                     $feed->add_item($item);
@@ -247,6 +311,9 @@ class block_advnotifications extends block_base
                     // throw an exception of the param is an extremely
                     // malformed url.
                     debugging($e->getMessage());
+
+                    // DEBUG
+                    error_log($e->getMessage());
                 }
             }
         }
@@ -266,8 +333,13 @@ class block_advnotifications extends block_base
                 // crash the page. Specifically, moodle_url can throw an
                 // exception if the param is an extremely malformed url.
                 debugging($e->getMessage());
+
+                // DEBUG
+                error_log($e->getMessage());
             }
         }
+        // DEBUG
+        error_log('advnotifications get_feed completed ok');
 
         return $feed;
     }
