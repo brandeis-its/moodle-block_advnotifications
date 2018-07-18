@@ -89,7 +89,7 @@ function xmldb_block_advnotifications_upgrade($oldversion) {
     }
 
     // Add future upgrade points here.
-    if ($oldversion < 2018042717 ) {
+    if ($oldversion < 2018071312.03 ) {
         // Support for skipping RSS feeds for a while when they fail.
         $table = new xmldb_table('block_advnotificationsrss');
 
@@ -111,7 +111,7 @@ function xmldb_block_advnotifications_upgrade($oldversion) {
             $dbman->create_table($table);
         }
 
-        upgrade_block_savepoint(true, 2018042717, 'advnotifications');
+        upgrade_block_savepoint(true, 2018071312.03, 'advnotifications');
     }
 
     return true;
