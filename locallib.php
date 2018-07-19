@@ -142,9 +142,6 @@ function prep_notifications($instanceid) {
                 $extraclasses .= ' aicon';
             }
 
-            // FIXME: 'message' needs to be checked
-            // if it is a URL- retrieve content
-
             $rendernotif[] = array('extraclasses' => $extraclasses,     // Additional classes for custom styling.
                 'notifid' => $notification->id,                         // Notification identification number.
                 'alerttype' => $alerttype,                              // Type of alert - affects styling.
