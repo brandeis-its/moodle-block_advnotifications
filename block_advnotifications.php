@@ -47,7 +47,7 @@ class block_advnotifications extends block_base
      * @return bool|stdClass|stdObject
      */
     public function get_content() {
-        global $CFG, $DB, $USER;
+        global $CFG;
 
         if ($this->content !== null) {
             return $this->content;
@@ -65,7 +65,6 @@ class block_advnotifications extends block_base
             $notifications = prep_notifications($this->instance->id);
 
             // START new RSS code
-            // FIXME: should be abstracted into function
             $arraySize = count($notifications);
             $i = 0;
             while($i < $arraySize) {
@@ -73,39 +72,13 @@ class block_advnotifications extends block_base
                     $feedMsg = $notifications[$i]['message'];
                     // if it is a URL- retrieve content
                     if(filter_var($feedMsg, FILTER_VALIDATE_URL)) {
-                        
-                        // get record from db or insert it
-                        $advnotrss = $DB->get_record(
-                            'block_advnotificationsrss',
-                            array('url'=>$feedMsg),
-                            $fields='*', 
-                            $strictness=IGNORE_MISSING
-                        );
-                        if(! $advnotrss) {
-                            $advnotrss = new stdClass();
-                            $advnotrss->userid = $USER->id;
-                            $advnotrss->url = $feedMsg;
-                            $advnotrss->shared = 0;
-                            $advnotrss_id = $DB->insert_record('block_advnotificationsrss', $advnotrss);
-                        }
-    
-                        $updatedmsg = ''; 
-                        $rawFeed = $this->get_feed($advnotrss, 1, true);
-                        $items = $rawFeed->get_items();
-                        foreach($items as $item) {
-                            $description = $item->get_description();
-                            if(strlen($description) > 0) {
-                                $updatedmsg = $description;
-                                break;
-                            }
-                        }
-
-                        if(strlen($updatedmsg) > 0) {
+                        $updatedmsg = retrieve_feed_description($feedMsg);
+                        if($updatedmsg) {
                             $notifications[$i]['message'] = $updatedmsg;
                         }
                         else {
                             // nothing to pass on
-                            return false;
+                            $notifications[$i]['message'] = null;
                         }
                     }
                 }
