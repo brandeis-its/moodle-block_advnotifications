@@ -115,11 +115,6 @@ class block_advnotifications extends block_base
 
             // Render notifications.
             $html = $renderer->render_notification($notifications);
-
-            // DEBUG
-            $debug = var_export($html, true);
-            error_log('$html ' . $debug);
-
             $this->content->text = $html;
 
             return $this->content;
@@ -244,10 +239,6 @@ class block_advnotifications extends block_base
      * @return block_rss_client\output\feed|null The renderable feed or null of there is an error
      */
     public function get_feed($feedrecord, $maxentries, $showtitle) {
-
-        // DEBUG
-        error_log('advnotifications get_feed called ok');
-
         global $CFG;
         require_once($CFG->libdir.'/simplepie/moodle_simplepie.php');
 
@@ -282,9 +273,6 @@ class block_advnotifications extends block_base
             $this->title = strip_tags($feedtitle);
         }
 
-        // DEBUG
-        error_log("get_feed pre-checks all seem ok");
-
         // FIXME: $config var changed to 0
         // $feed = new \block_advnotifications\output\feed($feedtitle, $showtitle, $this->config->block_advnotifications_show_channel_image);
         $feed = new \block_advnotifications\output\feed($feedtitle, $showtitle, 0);
@@ -311,9 +299,6 @@ class block_advnotifications extends block_base
                     // throw an exception of the param is an extremely
                     // malformed url.
                     debugging($e->getMessage());
-
-                    // DEBUG
-                    error_log($e->getMessage());
                 }
             }
         }
@@ -333,14 +318,8 @@ class block_advnotifications extends block_base
                 // crash the page. Specifically, moodle_url can throw an
                 // exception if the param is an extremely malformed url.
                 debugging($e->getMessage());
-
-                // DEBUG
-                error_log($e->getMessage());
             }
         }
-        // DEBUG
-        error_log('advnotifications get_feed completed ok');
-
         return $feed;
     }
 
