@@ -72,7 +72,7 @@ class block_advnotifications extends block_base
                     $feedMsg = $notifications[$i]['message'];
                     // if it is a URL- retrieve content
                     if(filter_var($feedMsg, FILTER_VALIDATE_URL)) {
-                        $updatedmsg = retrieve_feed_description($feedMsg);
+                        $updatedmsg = retrieve_feed_description($this, $feedMsg);
                         if($updatedmsg) {
                             $notifications[$i]['message'] = $updatedmsg;
                         }

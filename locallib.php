@@ -157,7 +157,7 @@ function prep_notifications($instanceid) {
 }
 
 
-function retrieve_feed_description($fURL) {
+function retrieve_feed_description($obj, $fURL) {
     global $DB, $USER;
                         // get record from db or insert it
     $advnotrss = $DB->get_record(
@@ -175,7 +175,7 @@ function retrieve_feed_description($fURL) {
     }
 
     $updatedmsg = false;
-    $rawFeed = $this->get_feed($advnotrss, 1, true);
+    $rawFeed = $obj->get_feed($advnotrss, 1, true);
     $items = $rawFeed->get_items();
     foreach($items as $item) {
         $description = $item->get_description();
