@@ -74,7 +74,7 @@ class block_advnotifications extends block_base
                     if(filter_var($feedMsg, FILTER_VALIDATE_URL)) {
                         // FIXME: start here
                         require_once($CFG->dirroot . '/blocks/advnotifications/rsslib.php');
-                        $rss = new rssclient;
+                        $rss = new rsslib;
                         $updatedmsg = $rss->retrieve_feed_description($feedMsg);
                         if($updatedmsg) {
                             $notifications[$i]['message'] = $updatedmsg;
