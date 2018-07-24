@@ -34,6 +34,10 @@ class rsslib extends block_base
     /** @var bool track whether any of the output feeds have recorded failures */
     private $hasfailedfeeds = false;
 
+    // does nothing but required
+    public function init() {
+        return true;
+    }
 
     /**
      * Returns the html of a feed to be displaed in the block
@@ -256,7 +260,7 @@ class rsslib extends block_base
      * @return string first available feed description from URL
      */
 
-    function retrieve_feed_description($fURL) {
+    public function retrieve_feed_description($fURL) {
         global $DB, $USER;
                              // get record from db or insert it
         $advnotrss = $DB->get_record(
