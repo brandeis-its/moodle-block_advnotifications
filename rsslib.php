@@ -51,7 +51,8 @@ class rsslib extends block_base
         global $CFG;
         require_once($CFG->libdir.'/simplepie/moodle_simplepie.php');
 
-        if ($feedrecord->skipuntil) {
+        #if ($feedrecord->skipuntil) {
+        if (method_exists($feedrecord, 'skipuntil') and ($feedrecord->skipuntil)) {
             // Last attempt to gather this feed via cron failed - do not try to fetch it now.
             $this->hasfailedfeeds = true;
             return null;
