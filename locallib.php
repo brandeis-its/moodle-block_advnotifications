@@ -155,4 +155,3 @@ function prep_notifications($instanceid) {
 
     return $rendernotif;
 }
-

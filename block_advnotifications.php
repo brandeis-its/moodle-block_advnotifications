@@ -195,4 +195,3 @@ class block_advnotifications extends block_base
         return true;
     }
 }
-
