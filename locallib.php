@@ -156,34 +156,3 @@ function prep_notifications($instanceid) {
     return $rendernotif;
 }
 
-
-function retrieve_feed_description($obj, $fURL) {
-    global $DB, $USER;
-                        // get record from db or insert it
-    $advnotrss = $DB->get_record(
-        'block_advnotificationsrss',
-        array('url'=>$fURL),
-        $fields='*',
-        $strictness=IGNORE_MISSING
-    );
-    if(! $advnotrss) {
-        $advnotrss = new stdClass();
-        $advnotrss->userid = $USER->id;
-        $advnotrss->url = $fURL;
-        $advnotrss->shared = 0;
-        $advnotrss_id = $DB->insert_record('block_advnotificationsrss', $advnotrss);
-    }
-
-    $updatedmsg = false;
-    $rawFeed = $obj->get_feed($advnotrss, 1, true);
-    $items = $rawFeed->get_items();
-    foreach($items as $item) {
-        $description = $item->get_description();
-        if(strlen($description) > 0) {
-            $updatedmsg = $description;
-            break;
-        }
-    }
-
-    return $updatedmsg;
-}
