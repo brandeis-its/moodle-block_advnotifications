@@ -116,3 +116,4 @@ function xmldb_block_advnotifications_upgrade($oldversion) {
 
     return true;
 }
+

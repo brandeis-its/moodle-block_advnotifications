@@ -16,6 +16,7 @@
 
 /**
  * Contains class block_advnotifications\output\channel_image
+ * taken from blocks/rss_client
  *
  * @package   block_advnotifications
  * @copyright 2016 Howard County Public School System
