@@ -65,8 +65,7 @@ class block_advnotifications extends block_base
             $notifications = prep_notifications($this->instance->id);
 
             // START new RSS code
-            require_once($CFG->dirroot . '/blocks/advnotifications/rsslib.php');
-            $rss = new rsslib;
+            require_once($CFG->dirroot . '/blocks/advnotifications/advnotificationsrss.php');
             $arraySize = count($notifications);
             $i = 0;
             while($i < $arraySize) {
@@ -74,6 +73,7 @@ class block_advnotifications extends block_base
                     $feedMsg = $notifications[$i]['message'];
                     // if it is a URL- retrieve content
                     if(filter_var($feedMsg, FILTER_VALIDATE_URL)) {
+                        $rss = new advnotificationsrss;
                         $updatedmsg = $rss->retrieve_feed_description($feedMsg);
                         if($updatedmsg) {
                             $notifications[$i]['message'] = $updatedmsg;

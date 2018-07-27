@@ -19,14 +19,14 @@ defined('MOODLE_INTERNAL') || die;
 
 
 /**
- * Class rsslib extends base blocks class. Initialise and render notifications.
+ * Class advnotificationsrss extends base blocks class. Initialise and render notifications.
  *
  * @copyright  2016 onwards LearningWorks Ltd {@link https://learningworks.co.nz/}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 // mostly copied from block rss_client
-class rsslib extends block_base
+class advnotificationsrss extends block_base
 {
     /** The maximum time in seconds that cron will wait between attempts to retry failing RSS feeds. */
     const CLIENT_MAX_SKIPTIME = 43200; // 60 * 60 * 12 seconds.
