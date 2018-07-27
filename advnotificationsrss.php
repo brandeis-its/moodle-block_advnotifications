@@ -280,6 +280,9 @@ class advnotificationsrss extends block_base
 
         $updatedmsg = false;
         $rawFeed = $this->get_feed($advnotrss, 1, true);
+        if(is_null($rawFeed)) {
+            return $updatedmsg;
+        }
         $items = $rawFeed->get_items();
         foreach($items as $item) {
             $description = $item->get_description();
