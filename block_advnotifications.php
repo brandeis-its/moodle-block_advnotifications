@@ -81,8 +81,9 @@ class block_advnotifications extends block_base
                         else {
                             // nothing to pass on
                             // get out instead of returning empty message
-                            // $notifications[$i]['message'] = null;
-                            return false;
+                            $notifications[$i]['message'] = null;
+                            $notifications[$i]['title'] = null;
+                            $notifications[$i]['enabled'] = 0;
                         }
                     }
                 }
