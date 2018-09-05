@@ -69,6 +69,7 @@ class block_advnotifications extends block_base
             $arraySize = count($notifications);
             $i = 0;
             while($i < $arraySize) {
+                $incrementIndex = true;
                 if(array_key_exists('message', $notifications[$i])) {
                     $feedMsg = $notifications[$i]['message'];
                     // if it is a URL- retrieve content
@@ -79,15 +80,16 @@ class block_advnotifications extends block_base
                             $notifications[$i]['message'] = $updatedmsg;
                         }
                         else {
-                            // nothing to pass on
-                            // get out instead of returning empty message
-                            $notifications[$i]['message'] = null;
-                            $notifications[$i]['title'] = null;
-                            $notifications[$i]['enabled'] = 0;
+                            // nothing from RSS, remove element
+                            array_splice($notifications, $i, 1);
+                            $arraySize -= 1;
+                            $incrementIndex = false;
                         }
                     }
                 }
-                $i += 1;
+                if($incrementIndex) {
+                    $i += 1;
+                }
             }
             // END new RSS code
 
